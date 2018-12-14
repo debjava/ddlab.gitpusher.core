@@ -46,6 +46,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
     httpGet.setHeader("Authorization", "Basic " + encodedUser);
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpGet);
+      if (gitResponse.getStatusCode().equals("401"))
+        throw new GenericGitPushException("Invalid credentials");
       IResponseParser<String, String[]> responseParser = new BitBucketReponseParser();
       userName = (responseParser.getUser(gitResponse.getResponseText()))[0];
     } catch (GenericGitPushException e) {
@@ -67,6 +69,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
     httpGet.setHeader("Authorization", "Basic " + encodedUser);
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpGet);
+      if (gitResponse.getStatusCode().equals("401"))
+        throw new GenericGitPushException("Invalid credentials");
       IResponseParser<String, String[]> responseParser = new BitBucketReponseParser();
       repoNames = responseParser.getAllRepos(gitResponse.getResponseText());
     } catch (GenericGitPushException e) {
@@ -88,6 +92,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
     httpGet.setHeader("Authorization", "Basic " + encodedUser);
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpGet);
+      if (gitResponse.getStatusCode().equals("401"))
+        throw new GenericGitPushException("Invalid credentials");
       existsFlag = gitResponse.getStatusCode().equals("200") ? true : false;
     } catch (GenericGitPushException e) {
       throw e;
@@ -141,6 +147,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
     httpPost.setHeader("Content-type", "application/json");
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpPost);
+      if (gitResponse.getStatusCode().equals("401"))
+        throw new GenericGitPushException("Invalid credentials");
       if (!gitResponse.getStatusCode().equals("200"))
         throw new GenericGitPushException(
             "Unable to create a repo, a repository may already exist.");
@@ -254,6 +262,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
     httpGet.setHeader("Authorization", "Basic " + encodedUser);
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpGet);
+      if (gitResponse.getStatusCode().equals("401"))
+        throw new GenericGitPushException("Invalid credentials");
       IResponseParser<String, String[]> responseParser = new BitBucketReponseParser();
       gistSnippets = responseParser.getAllGistSnippets(gitResponse.getResponseText());
     } catch (GenericGitPushException e) {
@@ -282,7 +292,8 @@ public class BitBucketHandlerImpl implements IGitHandler {
 
     try {
       GitResponse gitResponse = HTTPUtil.getHttpGetOrPostResponse(httpPost);
-      System.out.println(gitResponse);
+        if (gitResponse.getStatusCode().equals("401"))
+            throw new GenericGitPushException("Invalid credentials");
       if (!gitResponse.getStatusCode().equals("201"))
         throw new GenericGitPushException("Unable to create a Snippet");
     } catch (GenericGitPushException e) {
